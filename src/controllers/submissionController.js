@@ -1,23 +1,37 @@
-const { createSubmission } = require("../../../controllers/submissionController");
+// src/controllers/submissionController.js (Slightly Improved)
 
-// Define the schema for the submission payload
-const submissionBodySchema = {
-    type: 'object',
-    required: ['userId', 'problemId', 'code', 'language'],
-    properties: {
-        userId: { type: 'string' },
-        problemId: { type: 'string' },
-        code: { type: 'string' },
-        language: { type: 'string', enum: ['CPP', 'JAVA', 'PYTHON'] }
-    },
-};
+const SubmissionService = require("../services/submissionService");
+const SubmissionRepository = require("../repositories/submissionRepository");
 
-async function submissionRoutes(fastify, options) {
-    fastify.post('/', {
-        schema: {
-            body: submissionBodySchema
-        }
-    }, createSubmission);
+const submissionService = new SubmissionService(new SubmissionRepository());
+
+async function createSubmission(req, reply) {
+  try {
+    console.log("DEBUG: Controller received submission request.");
+
+    const submissionData = {
+      problemId: req.body.problemId,
+      code: req.body.code,
+      language: req.body.language,
+      userId: req.user.id,
+    };
+
+    const response = await submissionService.addSubmission(submissionData);
+
+    // Use 'reply' to send the response
+    return reply.status(201).send({
+      error: {},
+      data: response,
+      success: true,
+      message: "Created submission successfully",
+    });
+  } catch (error) {
+    console.error("DEBUG: An error was caught by the controller:", error);
+    // Let the error bubble up to be handled by the global errorHandler
+    throw error;
+  }
 }
 
-module.exports = submissionRoutes;
+module.exports = {
+  createSubmission,
+};
