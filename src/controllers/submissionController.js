@@ -32,6 +32,22 @@ async function createSubmission(req, reply) {
   }
 }
 
+// New controller method to handle fetching a submission
+async function getSubmission(req, reply) {
+    try {
+        const submission = await submissionService.getSubmission(req.params.id);
+        return reply.status(200).send({
+            success: true,
+            data: submission,
+            error: {},
+            message: "Successfully fetched submission"
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
   createSubmission,
+  getSubmission
 };

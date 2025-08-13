@@ -1,6 +1,9 @@
 // src/routes/api/v1/submissionRoutes.js (Corrected)
 
-const { createSubmission } = require("../../../controllers/submissionController");
+const {
+  createSubmission,
+  getSubmission,
+} = require("../../../controllers/submissionController");
 const authenticate = require("../../../utils/authenticate");
 
 // Define the schema for the submission payload
@@ -25,6 +28,15 @@ async function submissionRoutes(fastify, options) {
       preHandler: [authenticate],
     },
     createSubmission
+  );
+
+  // New GET route to fetch a submission by ID
+  fastify.get(
+    "/:id",
+    {
+      preHandler: [authenticate], // Also secure this endpoint
+    },
+    getSubmission
   );
 }
 
