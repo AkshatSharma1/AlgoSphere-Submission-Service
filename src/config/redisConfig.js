@@ -27,6 +27,8 @@ if (!redisUrl) {
   );
 }
 
-const redisConnection = new Redis(redisUrl);
+const redisConnection = new Redis(redisUrl, {
+  maxRetriesPerRequest: null,
+});
 
 module.exports = redisConnection;
